@@ -146,7 +146,7 @@ export class AboutComponent implements OnInit {
     )
 
     // why transform the fetch promise into an observable?
-  //   advantage is can use ALL the rxjs operators to **combine the httpstream with other stream of valuesxx** like clickhandlers, timeouts, other http requests
+  //   advantage is can use ALL the rxjs operators to **COMBINE the httpstream with other stream of values** like clickhandlers, timeouts, other http requests
   }
 
 }

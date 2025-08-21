@@ -8,7 +8,8 @@ import {Observable} from 'rxjs';
 
 
 // WHY? transform the fetch promise into an observable?
-//   advantage is can use ALL the rxjs operators to **COMBINE the httpstream with other stream of values** like clickhandlers, timeouts, other http requests
+// Advantage is can THEN use ALL the rxjs operators to **COMBINE the httpstream with other stream of values** like clickhandlers, timeouts, other http requests
+// by doing pipe(map(res => res['payload'] to emit array of courses instead of the raw json output
 
 // all observables like interval created like this
 // Creates a new cold Observable by calling the Observable constructor

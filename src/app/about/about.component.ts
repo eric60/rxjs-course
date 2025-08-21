@@ -113,10 +113,18 @@ export class AboutComponent implements OnInit {
 
     const http$ = createHttpObservable('/api/courses')
 
-    http$.subscribe(
+    // how to derive a NEW observables from existing observables?
+    // need to use rxjs operator pipe
+
+    const courses$ = http$
+      .pipe(
+      map(jsonRes => jsonRes['payload'])
+    )
+
+    courses$.subscribe(
       courses => console.log("courses:", courses),
       noop,   // ()  => {},
-      () => console.log("complete")
+      () => console.log("courses$ completed")
     )
 
   }

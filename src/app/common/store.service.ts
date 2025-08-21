@@ -19,17 +19,6 @@ export class Store {
 
 
     init() {
-
-        const http$ = createHttpObservable('/api/courses');
-
-        http$
-            .pipe(
-                tap(() => console.log('HTTP request executed')),
-                map(res => Object.values(res['payload']))
-            )
-            .subscribe(
-                courses => this.subject.next(courses)
-            );
     }
 
     selectBeginnerCourses() {

@@ -110,6 +110,43 @@ export class AboutComponent implements OnInit {
       err => console.error(err),
       () => console.log("Stream 3 completed")
     )
+
+
+    // ================================================
+    // ========= Custom http observable
+    // ================================================
+    //   promise much different than observable, promise executes immediately and only emits once or fails, observable only executes in response to a subscription instantiation click$.subscribe()
+
+
+    // all observables like interval created like this
+    // Creates a new cold Observable by calling the Observable constructor
+    // cannot emit the http observable values inside create method, can only subscribe to it to get the stream of values, observer is private inside implementation of observable
+    const http$ = Observable.create(observer => {
+      // observer.next();
+      // observer.error();
+      // observer.complete()
+      fetch('/api/courses')
+        .then(httpresponse => {
+        return httpresponse.json()
+      })
+        .then(jsonBody => {
+          observer.next(jsonBody) // actually emit the jsonbody value
+          observer.complete() // terminate http stream
+          // observer.next() WARNING: breaks observable contract!
+        })
+        .catch(err => {
+          observer.error(err)
+        })
+    })
+
+    http$.subscribe(
+      courses => console.log("courses:", courses),
+      noop,   // ()  => {},
+      () => console.log("complete")
+    )
+
+    // why transform the fetch promise into an observable?
+  //   advantage is can use ALL the rxjs operators to **combine the httpstream with other stream of valuesxx** like clickhandlers, timeouts, other http requests
   }
 
 }

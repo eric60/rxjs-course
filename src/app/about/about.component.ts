@@ -66,9 +66,10 @@ export class AboutComponent implements OnInit {
     // ================================================
     // ========= Avoid Callback hell: WHY use rxjs operators?
     // ================================================
-    // to combine multiple streams in a simple way and avoid the PROBLEM of callback hell like this using native callback api making it harder and harder to understand
+    // Answer: To combine multiple streams in a simple way and avoid the PROBLEM of callback hell like this using native callback api making it harder and harder to understand
+
     // if you click twice, you will get TWO streams of data
-    document.addEventListener('click', clickEvent => {
+    document.addEventListener('cancel', clickEvent => {
       console.log(clickEvent);
 
       setTimeout(() => {
@@ -84,12 +85,14 @@ export class AboutComponent implements OnInit {
 
     // ===============Stream vs Observable=================================
 
-    // 1st Observable<number> is interval observable
+    // 1st Observable<number> is an interval observable
     /**
      * The observable interval$ variable is NOT a stream of values
-     * Observable = It is the DEFINITION for a stream of values, like a blueprint/template for how the stream would behave IF we instantiated it
-     * observable = blueprint for the stream
-     * interval only becomes a stream if we subscribe to it, THEN we have CREATED a stream of values
+
+     * Observable = blueprint for the stream
+     * DEFINITION for a stream of values, like a blueprint/template for how the stream would behave IF we instantiated it
+
+     * interval only becomes a stream IF we subscribe to it, THEN we have CREATED a stream of values, otherwise it STAYS as an observable not emitting any values
      */
     const interval$ = interval(1000)
     const subscription1 = interval$.subscribe(val => console.log("stream 1 val => " + val))
@@ -103,28 +106,12 @@ export class AboutComponent implements OnInit {
     const timer$ = timer(3000, 1000)
 
     // 3 core rxjs concepts: next, error, complete, subscriptions/unsubscribing
-    // 2nd Observable<Event> is click observable
+    // The 2nd Observable<Event> is a click observable
     const click$ = fromEvent(document, 'click')
     click$.subscribe(
       evt => console.log("stream 3: " + evt),
       err => console.error(err),
       () => console.log("Stream 3 completed")
-    )
-
-    const http$ = createHttpObservable('/api/courses')
-
-    // how to derive a NEW observables from existing observables?
-    // need to use rxjs operator pipe
-
-    const courses$ = http$
-      .pipe(
-      map(jsonRes => jsonRes['payload'])
-    )
-
-    courses$.subscribe(
-      courses => console.log("courses:", courses),
-      noop,   // ()  => {},
-      () => console.log("courses$ completed")
     )
 
   }

@@ -8,7 +8,13 @@
         <mat-tab label="Beginners">
 
             <courses-card-list
-                    [courses]="beginnerCourses">
+                    [courses]="beginnerCourses$ | async">
+<!--              async pipe subscribed to the observable and assign it to courses property, convient way of passing observable data to our template, advantage of unsubscribing to the observable when the component is destroyed
+
+so don't need to manually subscribe in home.ts anymore with courses$.subscribe() and won't run into nested subscription scenario again
+
+simply define streams of values beginnerCourses$ and dont't need manually subscribe anymore
+-->
 
             </courses-card-list>
 
@@ -17,7 +23,7 @@
         <mat-tab label="Advanced">
 
             <courses-card-list
-                    [courses]="advancedCourses"
+                    [courses]="advancedCourses$ | async"
 
             ></courses-card-list>
 

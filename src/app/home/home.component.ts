@@ -14,10 +14,11 @@ import {Store} from '../common/store.service';
 })
 export class HomeComponent implements OnInit {
 
-  // OLD WAY
+  // OLD WAY: Imperative
   beginnerCourses: Course[];
   advancedCourses: Course[];
 
+  // NEW WAY: Reactive
   beginnerCourses$: Observable<Course[]>
   advancedCourses$: Observable<Course[]>
 
@@ -26,34 +27,46 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    const http$ = createHttpObservable('/api/courses')
+    const http$: Observable<any> = createHttpObservable('/api/courses')
 
     // how to derive a NEW observables from existing observables?
     // need to use rxjs operator pipe
-
-    const courses$ = http$
+    /*
+{
+"payload": [
+{id:1},
+{id:2}
+]
+ */
+    const courses$: Observable<Course[]> = http$
       .pipe(
         map(jsonRes => jsonRes['payload'])
       )
 
-    // Option 1) Imperative option) subscribe and getting and setting data within it
+    // Option 1) Imperative Design
+    // subscribe and getting and setting data within it
     // Simplest way to get and set courses is to just simply subscribe to the courses$ and in the success callback just get the data and set the courses and pass back to template
-    // problem is putting all the logic in the subscribe block will not scale with complexity, will quickly run into problem of nested subscribe calls (rxjs anti pattern) within each other causing callback hell,
+    // problem is putting all the logic in the subscribe block will not scale with complexity, it will quickly run into problem of nested subscribe calls (rxjs anti pattern) within each other causing callback hell,
 
-/*    courses$.subscribe(
-      courses => {
-        console.log("courses:", courses)
-        this.beginnerCourses = courses.filter(course => course.category == 'BEGINNER')
-        this.advancedCourses = courses.filter(course => course.category == 'ADVANCED')
-      },
-      noop, // ()  => {},
-      () => console.log("courses$ completed")
-    )*/
+    /*    courses$.subscribe(
+          courses => {
+            console.log("courses:", courses)
+            this.beginnerCourses = courses.filter(course => course.category == 'BEGINNER')
+            this.advancedCourses = courses.filter(course => course.category == 'ADVANCED')
+          },
+          noop, // ()  => {},
+          () => console.log("courses$ completed")
+        )*/
 
     // Option 2) Reactive design
-  this.beginnerCourses$ = http$.pipe(
-    map(courses => courses.filter(courses => courses.filter(course => course.category = 'BEGINNER')))
-  )
+    this.beginnerCourses$ = courses$.pipe(
+      map(courses => courses.filter(course => course.category == 'BEGINNER'))
+    )
+
+    this.advancedCourses$ = courses$.pipe(
+      map(courses => courses.filter(course => course.category == 'ADVANCED'))
+    )
+
 
   }
 

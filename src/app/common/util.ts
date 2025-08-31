@@ -14,6 +14,23 @@ import {Observable} from 'rxjs';
 // all observables like interval created like this
 // Creates a new cold Observable by calling the Observable constructor
 // cannot emit the http observable values inside create method, can only subscribe to it to get the stream of values, observer is private inside implementation of observable
+/*
+Example json response
+{
+  "payload": [
+    {
+      "id": 0,
+      "description": "RxJs In Practice Course",
+      "iconUrl": "https://s3-us-west-1.amazonaws.com/angular-university/course-images/rxjs-in-practice-course.png",
+      "courseListIcon": "https://angular-academy.s3.amazonaws.com/main-logo/main-page-logo-small-hat.png",
+      "longDescription": "Understand the RxJs Observable pattern, learn the RxJs Operators via practical examples",
+      "category": "BEGINNER",
+      "lessonsCount": 10
+    },
+    {
+      "id": 1,
+    },
+ */
 export function createHttpObservable(url: string): Observable<any> {
   return Observable.create(observer => {
     // observer.next();

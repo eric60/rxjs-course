@@ -114,6 +114,15 @@ export class AboutComponent implements OnInit {
       () => console.log("Stream 3 completed")
     )
 
+        // ===============concat observable concatentation=================================
+    // concat subscribes to each observable sequentially one-by-one when it completes.
+    // the key of concat is it only starts source2$ observable when source1$ completes, if it never compeltes e.g. if it was an interval(1000) then source2$ would never start
+    const source1$ = of(1,2,3)
+    const source2$ = of(4,5,6)
+    const source3$ = of(7,8,9)
+    const result$ = concat(source1$, source2$, source3$)
+    result$.subscribe(val => {console.log("concat() val:" + val)})
+
   }
 
 }

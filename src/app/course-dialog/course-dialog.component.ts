@@ -44,24 +44,33 @@ export class CourseDialogComponent implements AfterViewInit {
   ngOnInit() {
     // value emitted is form inputs
     this.form.valueChanges.pipe(
-      filter(() => this.form.valid)
-    ).subscribe(changes => {
+      filter(() => this.form.valid),
+      concatMap(changes => this.saveCourse(changes))
+    )
+      // don't need to subscribe anymore because concatMap is (1) creating observables by mapping each formChange to its own observable, subscrbing to them, and commpleting them, and concatenating them together
+    .subscribe(changes => {
 
+      // PROBLEM: constant saving constant waterfall
+      // Old code is just combining 2 observables 1 after the other after each form.valid change from valueChanges observable causing constant http requests, need new code to combine all changesFormChanges into 1 http request saveCourse
+     /*
       const saveCourses$ = this.saveCourse(changes)
-
       saveCourses$.subscribe()
+      */
+      // SOLUTION: sequential saving, backend 2 second delay - consistent waterfall
+      // concatmap converts each value from observable into its OWN observable, maps each value to an observable then flattens all these inner observables using concatAll
     })
   }
 
-  saveCourse(changes) {
-    return fromPromise(fetch(`/api/courses/${this.course.id}`,
+  saveCourse(changesFormChanges) {
+    const saveCourse$ = fromPromise(fetch(`/api/courses/${this.course.id}`,
         {
           method: 'PUT',
-          body: JSON.stringify(changes),
+          body: JSON.stringify(changesFormChanges),
           headers: {
             'content-type': 'application/json'
           }
         }));
+    return saveCourse$;
   }
 
   ngAfterViewInit() {

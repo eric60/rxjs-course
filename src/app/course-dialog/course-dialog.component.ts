@@ -45,9 +45,12 @@ export class CourseDialogComponent implements AfterViewInit {
     // value emitted is form inputs
     this.form.valueChanges.pipe(
       filter(() => this.form.valid),
-      concatMap(changes => this.saveCourse(changes))
+      // this.saveCourse(changes).subscribe() // (1) constant saving without observable operator
+      concatMap(changes => this.saveCourse(changes)) // (2) sequential saving with concatMap and order of saving is important
+      // mergeMap(changes => this.saveCourse(changes)); // (3) parallel saving with merge map where order of saving is not necessary
     )
-      // don't need to subscribe anymore because concatMap is (1) CREATING observables by mapping each formChange to its own observable, (2) subscribing to them, (3) completing them, and (4) concatenating them together
+      // don't need to subscribe anymore
+      // because concatMap is (1) CREATING observables by mapping each formChange to its own observable, (2) subscribing to them, (3) completing them, and (4) concatenating them together
     .subscribe(changes => {
 
       // PROBLEM: constant saving constant waterfall in requests

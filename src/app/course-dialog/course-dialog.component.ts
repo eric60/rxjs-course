@@ -46,7 +46,7 @@ export class CourseDialogComponent implements AfterViewInit {
     this.form.valueChanges.pipe(
       filter(() => this.form.valid),
       // this.saveCourse(changes).subscribe() // (1) constant saving without observable operator
-      concatMap(changes => this.saveCourse(changes)) // (2) sequential saving with concatMap and order of saving is important
+      concatMap(changes => this.saveCourse(changes)) // (2) sequential saving with concatMap and order of saving is important is desired to save the last value in a formdraft autosave feature
       // mergeMap(changes => this.saveCourse(changes)); // (3) parallel saving with merge map where order of saving is not necessary
     )
       // don't need to subscribe anymore
@@ -77,6 +77,11 @@ export class CourseDialogComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    fromEvent(this.saveButton.nativeElement, 'click')
+      .pipe(
+        exhaustMap(() => this.saveCourse(this.form.value))
+      //   from click event clicking 10 times, the observable is just a stream of clicks so  don't need to take any input value for (), so just execute saveCourse when clicked but use exhaustMap instead of concatMap to ignore conflicting events from the source observable
+      )
 
   }
 

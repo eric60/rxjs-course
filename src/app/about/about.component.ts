@@ -131,9 +131,9 @@ export class AboutComponent implements OnInit {
     const interval1$ = interval(1000)
     const interval2$ = interval1$.pipe(map(val => 10 * val))
     const intervalResult$ = merge(interval1$, interval2$)
-    intervalResult$.subscribe(val => {
-      console.log(val)
-    })
+    // intervalResult$.subscribe(val => {
+    //   console.log(val)
+    // })
   }
 
 }

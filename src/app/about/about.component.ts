@@ -85,7 +85,8 @@ export class AboutComponent implements OnInit {
 
     // ===============Stream vs Observable=================================
 
-    // 1st Observable<number> is an interval observable
+    // 1st Observable<number> you learned is a simple interval observable
+
     /**
      * The observable interval$ variable is NOT a stream of values
 
@@ -116,7 +117,9 @@ export class AboutComponent implements OnInit {
 
 // ===============concat operator - observable concatenation=================================
     // concat subscribes to each observable sequentially one-by-one when it completes.
-    // the key of concat is it only starts source2$ observable when source1$ completes, if it never compeltes e.g. if it was an interval(1000) then source2$ would never start
+
+    // the KEY of concat is it only starts source2$ observable when source1$ COMPLETES
+    // if it never completes e.g. if it was an interval(1000) then source2$ would never start
     const source1$ = of(1, 2, 3)
     const source2$ = of(4, 5, 6)
     const source3$ = of(7, 8, 9)
@@ -126,7 +129,7 @@ export class AboutComponent implements OnInit {
     })
 
 
-// ===============concat operator - observable concatenation=================================
+// ===============merge operator=================================
     console.log("===> merge operator")
     const interval1$ = interval(1000)
     const interval2$ = interval1$.pipe(map(val => 10 * val))
@@ -134,6 +137,15 @@ export class AboutComponent implements OnInit {
     // intervalResult$.subscribe(val => {
     //   console.log(val)
     // })
+
+    // ===============unsubscribe feature=================================
+    const intervalx1$ = interval(1000);
+    const sub = intervalx1$.subscribe(val => console.log(val));
+    setTimeout(() => {
+      sub.unsubscribe();
+    console.log("unsubscribed")
+  }, 5000)
+
   }
 
 }

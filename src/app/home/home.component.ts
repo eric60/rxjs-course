@@ -40,13 +40,16 @@ export class HomeComponent implements OnInit {
  */
     const courses$: Observable<Course[]> = http$
       .pipe(
-        tap(() => console.log("tap operator produced this side effect of logging: HTTP request executed")), // tap operator used to product side effects in our observable chain, update something outside of observable chain or logging statement
+        tap(() => console.log("tap operator produced this side effect of console.logging: HTTP request executed")), // tap operator used to product side effects in our observable chain, update something outside of observable chain or logging statement
+
         map(jsonRes => jsonRes['payload']),
-        shareReplay() // share replay operator makes the stream of values from the http$ observable shared across multiple subscriptions, same stream only once
+
+        shareReplay() // share replay operator makes the stream of values from the http$ observable shared across multiple subscriptions, same stream used only once
       )
         // very common problem: multiple http requests when it could be 1
-    // 2 observables, each subscribed to using async pipe, 2 different subcriptions to 2 different observables derived from the SAME http observable, triggers 2 separate http requests
-    // solution: avoid default behavior of complete new stream by subscription, instead want to share the same execution of http$ observable (i.e. the stream of values) shared across multiple subscribers, only once
+    // 2 observables, each subscribed to using async pipe,
+    // 2 different subscriptions to 2 different observables derived from the SAME http observable, triggers 2 separate http requests
+    // SOLUTION: avoid default behavior of complete new stream by subscription, instead want to share the same execution of http$ observable (i.e. the stream of values) shared across multiple subscribers, only once
 
     // Option 1) Imperative Design
     // subscribe and getting and setting data within it

@@ -69,6 +69,7 @@ export function createHttpObservable(url: string): any {
         observer.error(err)
       })
 
+    // =====how to use abortcontroller to abort after observer unsubscribed? =================
     /*
     The AbortController API, combined with AbortSignal, can be effectively used in Angular applications, particularly when dealing with asynchronous operations like HTTP requests, to manage their cancellation. This is especially relevant in scenarios where components might be destroyed or requests need to be aborted due to user interaction or other application logic.
 
@@ -85,7 +86,7 @@ Cleaner Code: Centralizes the cancellation logic for multiple asynchronous opera
     // if observer is unsubscribed then abort
 
       // 6. Return the teardown logic function to be executed by the observer
-    // This function runs automatically when the observer unsubscribes
+    // This function runs automatically when the observer unsubscribes because the fetch.then.then.catch block exits and runs this
     return () => {
       console.log('The Observer unsubscribed so Aborting fetch...');
       abortController.abort();

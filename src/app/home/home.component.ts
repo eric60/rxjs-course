@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     const http$: Observable<any> = createHttpObservable('/api/courses')
 
-    // how to derive a NEW observables from existing observables?
+    // how to derive a NEW observables from pre-existing observables?
     // need to use rxjs operator pipe
     /*
 {

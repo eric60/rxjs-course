@@ -31,10 +31,12 @@ export class AboutComponent implements OnInit {
   example: every click is a stream of values of the click event
 
   almost everything is asynchronous in angular
+
   1. requests from network bringing in data from backend,
   2. timeouts in frontend
   3. user interaction with clicks/mouse over events
-  need to combine all these async events in 1 program
+
+  need to combine all these async events in 1 program with rxjs operators
 
 
    */
@@ -143,8 +145,23 @@ export class AboutComponent implements OnInit {
     const sub = intervalx1$.subscribe(val => console.log(val));
     setTimeout(() => {
       sub.unsubscribe();
-    console.log("unsubscribed")
+    console.log("unsubscribed intervalx1$")
   }, 5000)
+
+// ===============unsubscribe feature on createHttpObservable fetch call=================================
+    console.log("trying to subscribe to http2$")
+    const http2$: Observable<any> = createHttpObservable("/api/courses")
+
+    // Previous Error: Cannot read properties of undefined (reading 'subscribe') since did not actually return the observable!
+    const sub2 = http2$.subscribe(value => console.log(value));
+    console.log("subscribed to http2$")
+
+    // To demonstrate abortion, unsubscribe after a delay to allow the fetch call to be made first
+    setTimeout(() => {
+      console.log('Unsubscribing from the observable.')
+      sub2.unsubscribe()
+      console.log("unsubscribed to http2$")
+    }, 50)
 
   }
 

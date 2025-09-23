@@ -54,6 +54,7 @@ export function createHttpObservable(url: string): any {
 
       .then(jsonBody => {
         // 3. If successful, emit the data and complete the observable
+        console.log("createHttpObservable data", jsonBody);
         observer.next(jsonBody) // actually emit the jsonbody value to the stream
         observer.complete() // terminate http stream
         // observer.next() WARNING: this breaks observable contract!
@@ -69,14 +70,17 @@ export function createHttpObservable(url: string): any {
         observer.error(err)
       })
 
+    // =====Implementing a Cancellable HTTP Observable =================
     // =====how to use abortcontroller to abort after observer unsubscribed? =================
     /*
     The AbortController API, combined with AbortSignal, can be effectively used in Angular applications, particularly when dealing with asynchronous operations like HTTP requests, to manage their cancellation. This is especially relevant in scenarios where components might be destroyed or requests need to be aborted due to user interaction or other application logic.
 
 Key benefits of using AbortController in Angular:
-Resource Management: Prevents unnecessary network requests from completing and consuming resources if the component or operation is no longer relevant.
-Improved User Experience: Allows for quick cancellation of long-running operations, enhancing responsiveness.
-Cleaner Code: Centralizes the cancellation logic for multiple asynchronous operations associated with a single controller.
+* Resource Management: Prevents unnecessary network requests from completing and consuming resources if the component or operation is no longer relevant.
+
+* Improved User Experience: Allows for quick cancellation of long-running operations, enhancing responsiveness.
+
+* Cleaner Code: Centralizes the cancellation logic for multiple asynchronous operations associated with a single controller abortController.abort()
 
      */
     // This is a custom feature to abort the fetch call after unsubscribing to the observable

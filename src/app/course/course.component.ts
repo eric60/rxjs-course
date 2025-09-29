@@ -2,16 +2,16 @@ import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/
 import {ActivatedRoute} from "@angular/router";
 import {Course} from "../model/course";
 import {
-    debounceTime,
-    distinctUntilChanged,
-    startWith,
-    tap,
-    delay,
-    map,
-    concatMap,
-    switchMap,
-    withLatestFrom,
-    concatAll, shareReplay
+  debounceTime,
+  distinctUntilChanged,
+  startWith,
+  tap,
+  delay,
+  map,
+  concatMap,
+  switchMap,
+  withLatestFrom,
+  concatAll, shareReplay
 } from 'rxjs/operators';
 import {merge, fromEvent, Observable, concat} from 'rxjs';
 import {Lesson} from '../model/lesson';
@@ -20,40 +20,46 @@ import {Store} from '../common/store.service';
 
 
 @Component({
-    selector: 'course',
-    templateUrl: './course.component.html',
-    styleUrls: ['./course.component.css'],
-    standalone: false
+  selector: 'course',
+  templateUrl: './course.component.html',
+  styleUrls: ['./course.component.css'],
+  standalone: false
 })
 export class CourseComponent implements OnInit, AfterViewInit {
 
-    courseId:number;
+  courseId: number;
 
-    course$: Observable<Course[]>
-    lesson$: Observable<Lesson[]>
-
-
-    @ViewChild('searchInput', { static: true }) input: ElementRef;
-
-    constructor(private route: ActivatedRoute, private store: Store) {
-
-    }
-
-    ngOnInit() {
-
-        this.courseId = this.route.snapshot.params['id'];
-
-        this.course$ = createHttpObservable(`/api/courses/${this.courseId}`)
+  course$: Observable<Course[]>
+  lesson$: Observable<Lesson[]>
 
 
-        this.lesson$ = createHttpObservable(`/api/lessons?courseId=${this.courseId}&pageSize=100`)
-          .pipe(map(res => res['payload']))
+  @ViewChild('searchInput', {static: true}) input: ElementRef;
 
-    }
+  constructor(private route: ActivatedRoute, private store: Store) {
 
-    ngAfterViewInit() {
+  }
 
-    }
+  ngOnInit() {
+
+    this.courseId = this.route.snapshot.params['id'];
+
+    this.course$ = createHttpObservable(`/api/courses/${this.courseId}`)
+
+
+    this.lesson$ = createHttpObservable(`/api/lessons?courseId=${this.courseId}&pageSize=100`)
+      .pipe(map(res => res['payload']))
+
+  }
+
+  ngAfterViewInit() {
+    // convert stream of search terms into a backend request
+    fromEvent<any>(this.input.nativeElement, 'keyup')
+      .pipe(
+        map(event => event.target.value),
+          debounceTime(400),
+        distinctUntilChanged()
+      ).subscribe(console.log)
+  }
 
 }
 

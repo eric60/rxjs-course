@@ -68,7 +68,7 @@ export class AboutComponent implements OnInit {
     // ================================================
     // ========= Avoid Callback hell: WHY use rxjs operators?
     // ================================================
-    // Answer: To combine multiple streams in a simple way and avoid the PROBLEM of callback hell like this using native callback api making it harder and harder to understand
+    // Answer: To combine multiple streams in a simple way and avoid the PROBLEM of callback hell like this below using native callback api making it harder and harder to understand with each nested callback
 
     // if you click twice, you will get TWO streams of data
     document.addEventListener('cancel', clickEvent => {
@@ -77,10 +77,12 @@ export class AboutComponent implements OnInit {
       setTimeout(() => {
         console.log("setTimeout stream finished")
         let counter = 0
+
         setInterval(() => {
           console.log("setInterval val => " + counter)
           counter++
         }, 1000)
+
       }, 3000)
 
     })

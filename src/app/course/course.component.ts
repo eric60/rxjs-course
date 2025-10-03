@@ -45,20 +45,25 @@ export class CourseComponent implements OnInit, AfterViewInit {
 
     this.course$ = createHttpObservable(`/api/courses/${this.courseId}`)
 
-
-    this.lesson$ = createHttpObservable(`/api/lessons?courseId=${this.courseId}&pageSize=100`)
-      .pipe(map(res => res['payload']))
+    this.lesson$ = this.loadLessons()
 
   }
 
   ngAfterViewInit() {
-    // convert stream of search terms into a backend request
+    // convert stream of search terms into a stream of backend requests
     fromEvent<any>(this.input.nativeElement, 'keyup')
       .pipe(
         map(event => event.target.value),
           debounceTime(400),
-        distinctUntilChanged()
+        distinctUntilChanged(),
+        concatMap(searchTerm => this.loadLessons(searchTerm))
+        // use switchMap instead of concatMap to cancel the previous http request when having a new search term in the typeahead feature
       ).subscribe(console.log)
+  }
+
+  loadLessons(searchTerm) {
+    return createHttpObservable(`/api/lessons?courseId=${this.courseId}&pageSize=100&filter=${searchTerm}}`)
+      .pipe(map(res => res['payload']))
   }
 
 }

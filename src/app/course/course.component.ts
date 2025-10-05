@@ -45,24 +45,31 @@ export class CourseComponent implements OnInit, AfterViewInit {
 
     this.course$ = createHttpObservable(`/api/courses/${this.courseId}`)
 
-    this.lesson$ = this.loadLessons()
+    // concat 2 observables: (1) initialLessons$ loadLessons first and only then show (2) searchLessons$ search results
+    // this.lesson$ = this.loadLessons()
 
   }
 
   ngAfterViewInit() {
+    // search stream
     // convert stream of search terms into a stream of backend requests
-    fromEvent<any>(this.input.nativeElement, 'keyup')
+    const searchLessons$ = fromEvent<any>(this.input.nativeElement, 'keyup')
       .pipe(
         map(event => event.target.value),
           debounceTime(400),
         distinctUntilChanged(),
-        concatMap(searchTerm => this.loadLessons(searchTerm))
-        // use switchMap instead of concatMap to cancel the previous http request when having a new search term in the typeahead feature
-      ).subscribe(console.log)
+        switchMap(searchTerm => this.loadLessons(searchTerm))
+        // use switchMap instead of concatMap to cancel the previous http request (status code 0, prevent request from completing at all) when having a new search term in the typeahead feature
+      )
+      // .subscribe(console.log)
+
+    const initialLessons$ = this.loadLessons()
+
+    this.lesson$ = concat(initialLessons$, searchLessons$)
   }
 
-  loadLessons(searchTerm) {
-    return createHttpObservable(`/api/lessons?courseId=${this.courseId}&pageSize=100&filter=${searchTerm}}`)
+  loadLessons(searchTerm = ''): Observable<Lesson[]> {
+    return createHttpObservable(`/api/lessons?courseId=${this.courseId}&pageSize=100&filter=${searchTerm}`)
       .pipe(map(res => res['payload']))
   }
 

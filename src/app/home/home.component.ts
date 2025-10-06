@@ -40,13 +40,26 @@ export class HomeComponent implements OnInit {
  */
     const courses$: Observable<Course[]> = http$
       .pipe(
-        tap(() => console.log("tap operator produced this side effect of console.logging: HTTP request executed")), // tap operator used to product side effects in our observable chain, update something outside of observable chain or logging statement
+        tap(() => console.log("tap operator produced this side effect of console.logging: HTTP request executed")), // tap operator used to PRODUCE SIDE EFFECT Sin our observable chain, update something outside of the observable chain or logging statement
 
         map(jsonRes => jsonRes['payload']),
 
-        shareReplay() // share replay operator makes the stream of values from the http$ observable shared across multiple subscriptions, same stream used only once
+        shareReplay(), // share replay operator makes the stream of values from the http$ observable shared across multiple subscriptions, same stream used only once
+        catchError(err => {
+          return of([
+            {
+              id: 0,
+              description: "RxJs In Practice Course",
+              iconUrl: 'https://s3-us-west-1.amazonaws.com/angular-university/course-images/rxjs-in-practice-course.png',
+              courseListIcon: 'https://angular-academy.s3.amazonaws.com/main-logo/main-page-logo-small-hat.png',
+              longDescription: "Understand the RxJs Observable pattern, learn the RxJs Operators via practical examples",
+              category: 'BEGINNER',
+              lessonsCount: 10
+            }
+          ])
+        }) // error handling strategy 1: Recover from error by returning an ALTERNATIVE error observable that replaces the original http observable when it fails. when error observable completes/errors out then the outer Observable<Course[]> completes
       )
-        // very common problem: multiple http requests when it could be 1
+    // very common problem: multiple http requests when it could be 1
     // 2 observables, each subscribed to using async pipe,
     // 2 different subscriptions to 2 different observables derived from the SAME http observable, triggers 2 separate http requests
     // SOLUTION: avoid default behavior of complete new stream by subscription, instead want to share the same execution of http$ observable (i.e. the stream of values) shared across multiple subscribers, only once

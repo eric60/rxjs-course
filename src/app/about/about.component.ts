@@ -154,7 +154,8 @@ export class AboutComponent implements OnInit {
     console.log("trying to subscribe to http2$")
     const http2$: Observable<any> = createHttpObservable("/api/courses")
 
-    // Previous Error: Cannot read properties of undefined (reading 'subscribe') since did not actually return the observable!
+    // Problem: Previous Error: Cannot read properties of undefined (reading 'subscribe')
+    // Solution: Error cause was due to not actually returning the observable!
     const sub2 = http2$.subscribe(value => console.log(value));
     console.log("subscribed to http2$")
 

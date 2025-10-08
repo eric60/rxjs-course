@@ -40,24 +40,30 @@ export class HomeComponent implements OnInit {
  */
     const courses$: Observable<Course[]> = http$
       .pipe(
-        tap(() => console.log("tap operator produced this side effect of console.logging: HTTP request executed")), // tap operator used to PRODUCE SIDE EFFECT Sin our observable chain, update something outside of the observable chain or logging statement
+        tap(() => console.log("tap operator produced this side effect of console.logging: HTTP request executed")), // tap operator used to PRODUCE SIDE EFFECTS in our observable chain, to update a variable outside of the observable chain or logging statement
 
         map(jsonRes => jsonRes['payload']),
 
-        shareReplay(), // share replay operator makes the stream of values from the http$ observable shared across multiple subscriptions, same stream used only once
-        catchError(err => {
-          return of([
-            {
-              id: 0,
-              description: "RxJs In Practice Course",
-              iconUrl: 'https://s3-us-west-1.amazonaws.com/angular-university/course-images/rxjs-in-practice-course.png',
-              courseListIcon: 'https://angular-academy.s3.amazonaws.com/main-logo/main-page-logo-small-hat.png',
-              longDescription: "Understand the RxJs Observable pattern, learn the RxJs Operators via practical examples",
-              category: 'BEGINNER',
-              lessonsCount: 10
-            }
-          ])
-        }) // error handling strategy 1: Recover from error by returning an ALTERNATIVE error observable that replaces the original http observable when it fails. when error observable completes/errors out then the outer Observable<Course[]> completes
+        shareReplay(), // share replay operator makes the stream of values from the http$ observable shared across multiple subscriptions, basically same stream used only once
+        catchError (error => {
+          console.log("Error occurred: ", error)
+          return throwError(error); // error handling strategy 2: throwError to return observables that **immediately** emits the error notification
+        })
+        // catchError(err => {
+        //   console.log("inside catchError")
+        //   // replacement observable
+        //   return of([
+        //     {
+        //       id: 0,
+        //       description: "RxJs In Practice Course",
+        //       iconUrl: 'https://s3-us-west-1.amazonaws.com/angular-university/course-images/rxjs-in-practice-course.png',
+        //       courseListIcon: 'https://angular-academy.s3.amazonaws.com/main-logo/main-page-logo-small-hat.png',
+        //       longDescription: "Understand the RxJs Observable pattern, learn the RxJs Operators via practical examples",
+        //       category: 'BEGINNER',
+        //       lessonsCount: 10
+        //     }
+        //   ])
+        // }) // error handling strategy 1: recoverable observable strategy: Recover from error by returning an alternative error observable that replaces the original http observable when it fails. when error observable completes/errors out then the outer Observable<Course[]> completes
       )
     // very common problem: multiple http requests when it could be 1
     // 2 observables, each subscribed to using async pipe,
@@ -65,9 +71,11 @@ export class HomeComponent implements OnInit {
     // SOLUTION: avoid default behavior of complete new stream by subscription, instead want to share the same execution of http$ observable (i.e. the stream of values) shared across multiple subscribers, only once
 
     // Option 1) Imperative Design
-    // subscribe and getting and setting data within it
+    // manually subscribe and getting and setting data within it
+
     // Simplest way to get and set courses is to just simply subscribe to the courses$ and in the success callback just get the data and set the courses and pass back to template
-    // problem is putting all the logic in the subscribe block will not scale with complexity, it will quickly run into problem of nested subscribe calls (rxjs anti pattern) within each other causing callback hell,
+
+    // problem is putting all the logic in the subscribe block will not scale with complexity, it will quickly run into problem of nested subscribe calls (call back hell) (rxjs anti pattern)
 
     /*    courses$.subscribe(
           courses => {
@@ -78,6 +86,7 @@ export class HomeComponent implements OnInit {
           noop, // ()  => {},
           () => console.log("courses$ completed")
         )*/
+
 
     // Option 2) Reactive design
     this.beginnerCourses$ = courses$.pipe(

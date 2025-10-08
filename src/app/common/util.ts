@@ -48,6 +48,13 @@ export function createHttpObservable(url: string): any {
     // 2. Start the fetch request with the signal
     fetch(url, {signal: signal})
       .then(httpresponse => {
+        if (httpresponse.ok) {
+          return httpresponse.json();
+        }
+        else {
+          // fetch never rejects on HTTP errors so need to hand !ok requests
+          observer.error("Fetch Request failed with status code: " + httpresponse.status)
+        }
         console.log("createHttpObservable fetch made for url:", url);
         return httpresponse.json()
       })
@@ -60,7 +67,12 @@ export function createHttpObservable(url: string): any {
         // observer.next() WARNING: this breaks observable contract!
       })
 
+      // Make sure:
+      // 	•	You’re actually calling observer.error(...) in both the .catch() and when response.ok is false.
+      // 	•	Otherwise, the observable completes silently without error, and catchError will never trigger.
       .catch(err => {
+        // fetch never rejects on HTTP errors like 404, 500 and goes into .then() not .catch() block, only goes into .catch() block when network failure like 503
+
          // 4. Check for and ignore an AbortError from cancellation
         if (err.name == 'AbortError') {
           console.log('Fetch request was aborted.');

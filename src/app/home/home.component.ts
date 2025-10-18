@@ -40,15 +40,24 @@ export class HomeComponent implements OnInit {
  */
     const courses$: Observable<Course[]> = http$
       .pipe(
-        tap(() => console.log("tap operator produced this side effect of console.logging: HTTP request executed")), // tap operator used to PRODUCE SIDE EFFECTS in our observable chain, to update a variable outside of the observable chain or logging statement
+        // bypass observable chain with catchErro and finalize to not execute twice if the 1st http request failed
+         catchError (error => {
+          console.log("Error occurred: ", error)
+          return throwError(error); // error handling strategy 2: throwError to return observables that **immediately** emits the error notification
+        }),
+        finalize(() => {
+          console.log("Finalize executed")
+        }),
+
+        tap(() => console.log("tap operator produced this side effect of console.logging: HTTP request executed")),
+        // tap operator used to PRODUCE SIDE EFFECTS in our observable chain, to update a variable outside of the observable chain or logging statement
 
         map(jsonRes => jsonRes['payload']),
 
-        shareReplay(), // share replay operator makes the stream of values from the http$ observable shared across multiple subscriptions, basically same stream used only once
-        catchError (error => {
-          console.log("Error occurred: ", error)
-          return throwError(error); // error handling strategy 2: throwError to return observables that **immediately** emits the error notification
-        })
+        shareReplay(), // share replay operator makes the stream of values from the http$ observable shared across multiple subscriptions, basically same stream used only once, but can make multiple http requests
+        // Why use shareReplay?
+        // You generally want to use shareReplay when you have side-effects or taxing computations that you do not wish to be executed amongst multiple subscribers. It may also be valuable in situations where you know you will have late subscribers to a stream that need access to previously emitted values. This ability to replay values on subscription is what differentiates share and shareRepla
+
         // catchError(err => {
         //   console.log("inside catchError")
         //   // replacement observable
@@ -65,10 +74,10 @@ export class HomeComponent implements OnInit {
         //   ])
         // }) // error handling strategy 1: recoverable observable strategy: Recover from error by returning an alternative error observable that replaces the original http observable when it fails. when error observable completes/errors out then the outer Observable<Course[]> completes
       )
-    // very common problem: multiple http requests when it could be 1
+    // very common problem: multiple http requests when it could be 1c http request
     // 2 observables, each subscribed to using async pipe,
     // 2 different subscriptions to 2 different observables derived from the SAME http observable, triggers 2 separate http requests
-    // SOLUTION: avoid default behavior of complete new stream by subscription, instead want to share the same execution of http$ observable (i.e. the stream of values) shared across multiple subscribers, only once
+    // SOLUTION: avoid default behavior of a completely new stream by subscription, instead want to share the same execution of http$ observable (i.e. the stream of values) shared across multiple subscribers, only once
 
     // Option 1) Imperative Design
     // manually subscribe and getting and setting data within it

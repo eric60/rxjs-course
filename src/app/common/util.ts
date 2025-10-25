@@ -46,6 +46,7 @@ export function createHttpObservable(url: string): any {
     // observer.complete()
 
     // 2. Start the fetch request with the signal
+    // app.route('/api/courses').get(getAllCourses);
     fetch(url, {signal: signal})
       .then(httpresponse => {
         if (httpresponse.ok) {

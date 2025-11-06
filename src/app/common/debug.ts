@@ -1,28 +1,12 @@
+// higher order function = function that returns a function
 
-import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {Observable} from "rxjs";
+import {tap} from "rxjs/operators";
 
-export enum RxJsLoggingLevel {
-    TRACE,
-    DEBUG,
-    INFO,
-    ERROR
-}
+const debug = (loggingLevel: number, message: string) => (sourceObs: Observable<any>) => sourceObs
 
-let rxjsLoggingLevel = RxJsLoggingLevel.INFO;
+  .pipe(
 
-export function setRxJsLoggingLevel(level: RxJsLoggingLevel) {
-    rxjsLoggingLevel = level;
-}
+    tap(val => console.log(message + val)),
 
-
-export const debug = (level: number, message:string) =>
-    (source: Observable<any>) => source
-        .pipe(
-            tap(val => {
-
-                if (level >= rxjsLoggingLevel) {
-                    console.log(message + ': ', val);
-                }
-            })
-        );
+  )

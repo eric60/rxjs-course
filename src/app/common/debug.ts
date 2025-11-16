@@ -18,8 +18,9 @@ export function setRxJSLoggingLevel(level: RxJSLoggingLevel) {
 
 /**
  * It defines a custom RxJS operator named debug.
- * You can attach this operator inside a .pipe() to log values passing through an observable only when a certain logging level is high enough.
- * 1. export const debug = (...) f1=> (...) f2=> ... This is a higher-order function.
+ * You can attach this operator inside a .pipe() to log values **passing through** an observable only when a certain logging level is high enough.
+
+ * 1. export const debug = f1(...) => f2(...) => ... This is a higher-order function.
  * It returns another function.
  *  •	First function receives:
  *  •	loggingLevel → a number controlling if logging happens

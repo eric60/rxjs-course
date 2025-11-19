@@ -37,6 +37,7 @@ Example json response
  */
 export function createHttpObservable(url: string): any {
       // 1. Create an AbortController for this specific subscription
+  // usually use Observable.create or new Observable() to create an observable, subject is at the same time an observable and observer
   return Observable.create(observer => {
     // need to create signal inside the observable creation to use in the fetch call
     const abortController = new AbortController();

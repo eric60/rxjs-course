@@ -159,12 +159,29 @@ export class AboutComponent implements OnInit {
     const sub2 = http2$.subscribe(value => console.log(value));
     console.log("subscribed to http2$")
 
-    // To demonstrate abortion, unsubscribe after a delay to allow the fetch call to be made first
+    // To demonstrate aborting, unsubscribe after a delay to allow the fetch call to be made first
     setTimeout(() => {
       console.log('Unsubscribing from the observable.')
       sub2.unsubscribe()
       console.log("unsubscribed to http2$")
     }, 50)
+
+    // ===================== Subject ================================
+    // subject is at the same time both an observable and observer for multicasting same stream of values to multiple observers/subscribers
+    const subject = new Subject(); // subject meant to be private the part of the application emitting certain data and should not be shared as a public variable
+
+    // derive an observable as variable from the subject
+    const series1$ = subject.asObservable(); // emitting values of the subject, OK to share this series1$ observable with other parts of the application because unlike the subject, the observable does not have the next, complete, error methods that could cause tight coupling, so other parts of application can only subscribe to the observable but cannot emit values on behalf of the observable itself
+
+    // prove that subject is very convenient way to produce a custom observable, easier to understand then observable.create -- but don't have unsubscribe logic , and risk sharing subject with other parts of application
+    // prefer use subject less, derive observable from the source itself using fromPromise() derive observable from a promise like fetch(), from(docment, 'keyup) deirve observable from browser event
+    console.log("====== Subject logs =======")
+    series1$.subscribe(console.log)
+
+    subject.next(1)
+    subject.next(2)
+    subject.next(3)
+    subject.complete()
 
   }
 

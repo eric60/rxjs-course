@@ -147,8 +147,8 @@ export class AboutComponent implements OnInit {
     const sub = intervalx1$.subscribe(val => console.log(val));
     setTimeout(() => {
       sub.unsubscribe();
-    console.log("unsubscribed intervalx1$")
-  }, 5000)
+      console.log("unsubscribed intervalx1$")
+    }, 5000)
 
 // ===============unsubscribe feature on createHttpObservable fetch call=================================
     console.log("trying to subscribe to http2$")
@@ -168,21 +168,31 @@ export class AboutComponent implements OnInit {
 
     // ===================== Subject ================================
     // subject is at the same time both an observable and observer for multicasting same stream of values to multiple observers/subscribers
-    const subject = new Subject(); // subject meant to be private the part of the application emitting certain data and should not be shared as a public variable
+    const subject = new BehaviorSubject(0);
+    // BehaviorSubject most used because late subscribers still receive the latest value in the stream whereas regular Subject would not have late subscribers receiving that latest value
+    // subject meant to be private the part of the application emitting certain data and should not be shared as a public variable
 
     // derive an observable as variable from the subject
     const series1$ = subject.asObservable(); // emitting values of the subject, OK to share this series1$ observable with other parts of the application because unlike the subject, the observable does not have the next, complete, error methods that could cause tight coupling, so other parts of application can only subscribe to the observable but cannot emit values on behalf of the observable itself
 
     // prove that subject is very convenient way to produce a custom observable, easier to understand then observable.create -- but don't have unsubscribe logic , and risk sharing subject with other parts of application
-    // prefer use subject less, derive observable from the source itself using fromPromise() derive observable from a promise like fetch(), from(docment, 'keyup) deirve observable from browser event
+    // prefer use subject less,
+    // (1) derive observable from the source itself using fromPromise()
+    // (2) derive observable from a promise like fetch(),
+    // (3) derive observable from a browser event like from(document, 'keyup)
     console.log("====== Subject logs =======")
-    series1$.subscribe(console.log)
+    series1$.subscribe(val => console.log("early sub: " + val))
 
     subject.next(1)
     subject.next(2)
     subject.next(3)
-    subject.complete()
+    // subject.complete()
 
+    setTimeout(() => {
+        series1$.subscribe(val => console.log("late sub: " + val))
+        subject.next(4);
+      }, 3000
+    )
   }
 
 }

@@ -1,0 +1,1 @@
+{"version":3,"file":"GolfCoach.js","sourceRoot":"","sources":["GolfCoach.ts"],"names":[],"mappings":"AAEA,MAAM,OAAO,SAAS;IAIpB,YAAY,SAAiB;QAFtB,aAAQ,GAAG,EAAE,CAAC;QAGnB,IAAI,CAAC,SAAS,GAAG,SAAS,CAAC;IAC7B,CAAC;IAED,eAAe;QACX,OAAO,eAAe,CAAC;IACzB,CAAC;CACJ"}

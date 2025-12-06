@@ -156,14 +156,14 @@ export class AboutComponent implements OnInit {
 
     // Problem: Previous Error: Cannot read properties of undefined (reading 'subscribe')
     // Solution: Error cause was due to not actually returning the observable!
-    const sub2 = http2$.subscribe(value => console.log(value));
-    console.log("subscribed to http2$")
+    // const sub2 = http2$.subscribe(value => console.log(value));
+    // console.log("subscribed to http2$")
 
     // To demonstrate aborting, unsubscribe after a delay to allow the fetch call to be made first
     setTimeout(() => {
       console.log('Unsubscribing from the observable.')
-      sub2.unsubscribe()
-      console.log("unsubscribed to http2$")
+      // sub2.unsubscribe()
+      // console.log("unsubscribed to http2$")
     }, 50)
 
     // ===================== Subject ================================

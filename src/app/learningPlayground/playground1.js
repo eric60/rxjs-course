@@ -1,55 +1,25 @@
 // ===========================
 // Record<K,T> = object where keys are one type and value another type
 // ==============================
-
-/*
-TL;DR
-	•	Record<K, T> = object map
-	•	Great for dictionaries / lookup tables
-	•	Perfect for avoiding unknown[] from Object.values
-	•	Stronger than any, cleaner than index signatures
-
- */
-
-interface Course {
-    id: number,
-        name: String
-}
-
-const coursesById: Record<string, Course> = {
-      "101": { id: 101, name: "Math" },
-  "102": { id: 102, name: "Science" }
-}
-
-const courses = Object.values(coursesById)
-
-console.log(courses)
-
-/*
-✅TypeScript forces all keys to exist
-✅ No extra keys allowed
- */
-type Status = 'pending' | 'approved' | 'rejected';
-
-const statusMessages: Record<Status, string> = {
-  pending: 'Waiting...',
-  approved: 'All good',
-  rejected: 'Nope'
+var coursesById = {
+    "101": { id: 101, name: "Math" },
+    "102": { id: 102, name: "Science" }
 };
-
-interface User {
-    name: string
-}
+var courses = Object.values(coursesById);
+console.log(courses);
+var statusMessages = {
+    pending: 'Waiting...',
+    approved: 'All good',
+    rejected: 'Nope'
+};
 // Use Record by default. Reach for Map only when you need its special powers.
-const users1: Record<string, User> = {
-  '1': { name: 'Eric' },
-  '2': { name: 'Alice' }
+var users1 = {
+    '1': { name: 'Eric' },
+    '2': { name: 'Alice' }
 };
-
-const users2 = new Map<string, User>();
+var users2 = new Map();
 users2.set('1', { name: 'Eric' });
 users2.set('2', { name: 'Alice' });
-
 /*
 ✅ Why Record is usually better (Angular/TS apps)
 
@@ -57,33 +27,24 @@ users2.set('2', { name: 'Alice' });
 
 APIs return objects — not Maps.
  */
-const response = {
-  "1": { "name": "Eric" },
-  "2": { "name": "Alice" }
-}
-
+var response = {
+    "1": { "name": "Eric" },
+    "2": { "name": "Alice" }
+};
 /*
 ✅ No conversion needed
 ❌ Map requires manual transformation
  */
-const data: Record<string, User> = response
-
-
-/*
-2️⃣ Better TypeScript ergonomics
- */
-type Status2 = 'pending' | 'approved';
-
+var data = response;
 /*
 ✅ Compiler enforces every key exists
 ✅ No extra keys allowed
 ❌Impossible with Map at compile time.
  */
-const labels: Record<Status2, string> = {
-  pending: 'Waiting...',
-  approved: 'Done'
+var labels = {
+    pending: 'Waiting...',
+    approved: 'Done'
 };
-
 /*
 3️⃣ Angular templates like objects, not Maps
 
@@ -97,8 +58,6 @@ With map:
 ✅ Less null-safety noise
 ✅ Easier change detection
  */
-
-
 /*
 4️⃣ Serialization & state management
 
@@ -108,8 +67,6 @@ Redux / NgRx / signals / localStorage:
 ❌ Map becomes {} unless you convert it
 
  */
-
-
 /*
 5️⃣ Lower cognitive overhead
 
@@ -120,8 +77,6 @@ delete users[id];
 
 Simple. Readable. Predictable.
  */
-
-
 /*
 🚨 When Map is the right tool
 
@@ -144,24 +99,23 @@ Objects mostly do — but with edge cases for numeric keys.
 ✅ You need frequent add/remove in hot paths
 
 Maps can be faster for:
-	•	massive datasets
-	•	frequent mutations
-	•	cache implementations
+    •	massive datasets
+    •	frequent mutations
+    •	cache implementations
 
 
-	✅ You rely on .size
-	map.size // O(1)
-	Object.keys(obj).length // O(n)
+    ✅ You rely on .size
+    map.size // O(1)
+    Object.keys(obj).length // O(n)
 
  */
-
 /*
 ❌ When NOT to use Map
-	•	App state
-	•	API data
-	•	Template-driven lookup
-	•	Anything that needs to be serialized
-	•	Angular services storing data
+    •	App state
+    •	API data
+    •	Template-driven lookup
+    •	Anything that needs to be serialized
+    •	Angular services storing data
 
 This is most app code.
 
@@ -171,8 +125,8 @@ TL;DR decision rule
 ✅ Caching / performance-critical logic / non-string keys → Map
 
 If you want, I can:
-	•	show performance benchmarks
-	•	refactor a real Map → Record example
-	•	explain why Angular change detection prefers objects
+    •	show performance benchmarks
+    •	refactor a real Map → Record example
+    •	explain why Angular change detection prefers objects
 
  */

@@ -51,28 +51,19 @@ export class Store {
       );
   }
 
-  saveCourse(courseId: number, changes): Observable<any> {
+  /*
+  save course in memory and broadcast new course to all subscribers
+  course saved optimistically in memory
+  ✅ You update the UI immediately, before the server responds
+  ❌ If the save fails, you rollback or show an error
+This makes the app feel fast instead of “spinner-heavy”.
 
-    const courses = this.subject.getValue();
 
-    const courseIndex = courses.findIndex(course => course.id == courseId);
-
-    const newCourses = courses.slice(0);
-
-    newCourses[courseIndex] = {
-      ...courses[courseIndex],
-      ...changes
-    };
-
-    this.subject.next(newCourses);
-
-    return fromPromise(fetch(`/api/courses/${courseId}`, {
-      method: 'PUT',
-      body: JSON.stringify(changes),
-      headers: {
-        'content-type': 'application/json'
-      }
-    }));
+Normal save: click → wait → server → update UI
+Optimistic save: click → update UI → server
+                 ↳ rollback if error
+   */
+  saveCourse() {
 
   }
 

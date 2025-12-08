@@ -8,7 +8,6 @@ TL;DR
 	•	Great for dictionaries / lookup tables
 	•	Perfect for avoiding unknown[] from Object.values
 	•	Stronger than any, cleaner than index signatures
-
  */
 
 interface Course {

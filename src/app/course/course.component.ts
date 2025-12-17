@@ -131,7 +131,7 @@ ngAfterViewInit runs once — right after Angular has created your component’s
         debug(RxJSLoggingLevel.TRACE, "Debug Trace - Search Input Value: "),
         debounceTime(400),
         // throttleTime(500),  // for typeahead search better use debounceTime instead of throttleTime because throttle does not take the latest value like debounceTime, it may just take the 1st value in the stream of values e.g. Hello (it only chose the "H" instead of the entire Hello
-        distinctUntilChanged(),
+        distinctUntilChanged(), // Returns an Observable that emits all items emitted by the source Observable that are distinct by comparison from the previous item. If a comparator function is provided, then it will be called for each item to test for whether or not that value should be emitted. // 1,1,2,2 => 1,2
         switchMap(searchTerm => this.loadLessons(searchTerm)),
         // use switchMap instead of concatMap to cancel the previous http request (status code 0, prevent request from completing at all) when having a new search term in the typeahead feature
         debug(RxJSLoggingLevel.DEBUG, "Debug lesson value from backend request: "), // log lessons from switchMap making backend call

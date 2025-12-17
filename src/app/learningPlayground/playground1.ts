@@ -1,13 +1,34 @@
-// ===========================
+// ==========================================//
 // Record<K,T> = object where keys are one type and value another type
-// ==============================
+// ==========================================//
 
 /*
 TL;DR
 	•	Record<K, T> = object map
 	•	Great for dictionaries / lookup tables
 	•	Perfect for avoiding unknown[] from Object.values
-	•	Stronger than any, cleaner than index signatures
+	•	Stronger than any
+	* cleaner than index signatures
+
+❌ When NOT to use Map
+	•	App state
+	•	API data
+	•	Template-driven lookup
+	•	Anything that needs to be serialized
+	•	Angular services storing data
+
+This is most app code.
+
+TL;DR decision rule
+
+✅ App state / API data / configs / lookups → Record
+✅ Caching / performance-critical logic / non-string keys → Map
+
+If you want, I can:
+	•	show performance benchmarks
+	•	refactor a real Map → Record example
+	•	explain why Angular change detection prefers objects
+
  */
 
 interface Course {
@@ -151,27 +172,5 @@ Maps can be faster for:
 	✅ You rely on .size
 	map.size // O(1)
 	Object.keys(obj).length // O(n)
-
- */
-
-/*
-❌ When NOT to use Map
-	•	App state
-	•	API data
-	•	Template-driven lookup
-	•	Anything that needs to be serialized
-	•	Angular services storing data
-
-This is most app code.
-
-TL;DR decision rule
-
-✅ App state / API data / configs / lookups → Record
-✅ Caching / performance-critical logic / non-string keys → Map
-
-If you want, I can:
-	•	show performance benchmarks
-	•	refactor a real Map → Record example
-	•	explain why Angular change detection prefers objects
 
  */

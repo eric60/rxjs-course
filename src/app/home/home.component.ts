@@ -119,6 +119,7 @@ export class HomeComponent implements OnInit {
     )*/
 
     // Option 3) Store design with selectors
+    console.log("home component ngOnInit setting beginnerCourses$ and advancedCourses$ from the store ")
     this.beginnerCourses$ = this.store.selectBeginnerCourses()
     this.advancedCourses$ = this.store.selectAdvancedCourses();
 

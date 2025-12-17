@@ -45,7 +45,7 @@ export class CourseDialogComponent implements AfterViewInit {
     // value emitted is form inputs
     this.form.valueChanges.pipe(
       filter(() => this.form.valid),
-      // this.saveCourse(changes).subscribe() // (1) constant saving without observable operator
+      // this.saveCourse(changes).subscribe() // (1) problem: constant saving on changes keyUp event without using an observable operator
       concatMap(changes => this.saveCourse(changes)) // (2) sequential saving with concatMap and order of saving is important is desired to save the last value in a formdraft autosave feature
       // mergeMap(changes => this.saveCourse(changes)); // (3) parallel saving with merge map where order of saving is not necessary
     )
@@ -86,6 +86,12 @@ export class CourseDialogComponent implements AfterViewInit {
   }
 
   save() {
+    console.log("this.form.value is a json of the whole object changed by the user from the form: {}", this.form.value)
+    this.store.saveCourse(this.course.id, this.form.value)
+      .subscribe(
+        () => this.close(),
+        err => console.log("Error saving course", err)
+      );
 
   }
 

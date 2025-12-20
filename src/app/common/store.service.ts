@@ -22,7 +22,7 @@ export class Store {
 
     http$
       .pipe(
-        tap(res => console.log("store service GET /api/courses executed. res: ", res)),
+        tap(res => console.log("store service init() function: GET /api/courses executed. res: ", res)),
         map(res => Object.values(res['payload']) as Course[])
       )
       .subscribe(courses => {

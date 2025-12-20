@@ -29,7 +29,7 @@ export class CourseComponent implements OnInit, AfterViewInit {
 
   courseId: number;
 
-  course$: Observable<Course[]>
+  course$: Observable<Course>
   lessons$: Observable<Lesson[]>
 
 
@@ -42,21 +42,41 @@ export class CourseComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.courseId = this.route.snapshot.params['id'];
 
-    this.course$ = createHttpObservable(`/api/courses/${this.courseId}`)
-      .pipe(
-        debug(RxJSLoggingLevel.INFO, `Debug Course value from backend request:`)
-      )
+    // this.course$ = createHttpObservable(`/api/courses/${this.courseId}`)
+    //   .pipe(
+    //     debug(RxJSLoggingLevel.INFO, `Debug Course value from backend request:`)
+    //   )
 
+    /*
+    const intervalCount = interval(1000);
+    const takeFive = intervalCount.pipe(take(5));
+    takeFive.subscribe(x => console.log(x));
+     */
+    this.course$ = this.store.selectCourseById(this.courseId);
+
+    // /api/lessons call #1
     this.lessons$ = this.loadLessons();
 
-    forkJoin(this.course$.pipe(take(1)), this.lessons$.pipe(take(1)))
-      .pipe(
-        tap(([course, lessons]) => {
-          console.log(`forkjoin result: course: {},  lessons: {}`, course, lessons);
-        })
-      ).subscribe()
+    // /api/lessons call #2
+    // forkJoin(this.course$.pipe(take(1)), this.lessons$.pipe(take(1)))
+    //   .pipe(
+    //     tap(([course, lessons]) => {
+    //       console.log(`forkjoin result: course: {},  lessons: {}`, course, lessons);
+    //     })
+    //   ).subscribe()
 
-    combineLatest([this.course$, this.lessons$]).subscribe((res) => console.log("combine latest result: ", res));
+    /*
+    In RxJS, combineLatest is an operator that combines multiple observables and emits whenever any of them emits, using the latest value from each.
+
+    What combineLatest does
+	•	Takes 2 or more observables
+	•	Waits until each observable has emitted at LEAST once
+	•	Then emits EVERY time any source emits
+	•	Output is an array (or object) of latest values
+     */
+    // api/lessons call #3
+/*    combineLatest([this.course$, this.lessons$])
+      .subscribe((res) => console.log("combine latest result: ", res));*/
 
     setRxJSLoggingLevel(RxJSLoggingLevel.TRACE)
 
@@ -98,7 +118,7 @@ Simple mental model
 	3.	ngAfterViewInit ← (this one) template/DOM created -- DOM manipulation, calling methods on child components, running animations, accessing @viewchild,
 	4.	ngAfterViewChecked
 
-ngAfterViewInit runs once — right after Angular has created your component’s view.
+ngAfterViewInit runs once — right after Angular has CREATED your component’s view.
    */
   ngAfterViewInit() {
 
@@ -121,10 +141,11 @@ ngAfterViewInit runs once — right after Angular has created your component’s
      const initialLessons$ = this.loadLessons()
      this.lesson$ = concat(initialLessons$, searchLessons$)*/
 
-    // alternative simpler way without concat initialLessons$ and searchLessons$ and just having 1 lesson$ with startWith on search to just load all the lessons
+    // alternative simpler way without concat(initialLessons$, searchLessons$) and just having 1 lesson$ by using startWith on search to just load all the lessons by default
     this.lessons$ = fromEvent<any>(this.input.nativeElement, 'keyup')
       .pipe(
         map(event => event.target.value),
+        tap(() => console.log("ngAfterViewInit() triggerred fromEvent(keyUp) to start a loadLessons(searchTerm)")),
         startWith(''), // startWith emits a new observable based on the previous observable of search Terms
         // problem: sometimes it's not easy to understand what's going on in the observable chain with multiple operators just by reading the chain, solution: debug by using the tap operator to produce debugging logging statements, can comment out as needed when too many logs
         // tap((search) => console.log("Search: ", search)),
@@ -139,6 +160,7 @@ ngAfterViewInit runs once — right after Angular has created your component’s
   }
 
   loadLessons(searchTerm = ''): Observable<Lesson[]> {
+    console.log("loadLessons(searchTerm) function ==> makes api call /api/lessons?courseId=1&pageSize=100&filter=xyz")
     return createHttpObservable(`/api/lessons?courseId=${this.courseId}&pageSize=100&filter=${searchTerm}`)
       .pipe(map(res => res['payload']))
   }

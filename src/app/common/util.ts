@@ -11,7 +11,8 @@ import {Observable} from 'rxjs';
 
 // ================================================
 // Why transform the fetch promise into an observable?
-// Reason is an advanctage to THEN use ALL the rxjs operators to **COMBINE the httpstream with other stream of values** like clickhandlers, timeouts, other http requests
+
+// Reason is an advantage to THEN use ALL the rxjs operators to **COMBINE the httpstream with other stream of values** like clickhandlers, timeouts, other http requests
 // by doing pipe(map(res => res['payload'] to emit array of courses instead of the raw json output
 
 // all observables like interval created like this
@@ -90,6 +91,7 @@ export function createHttpObservable(url: string): any {
     The AbortController API, combined with AbortSignal, can be effectively used in Angular applications, particularly when dealing with asynchronous operations like HTTP requests, to manage their cancellation. This is especially relevant in scenarios where components might be destroyed or requests need to be aborted due to user interaction or other application logic.
 
 Key benefits of using AbortController in Angular:
+
 * Resource Management: Prevents unnecessary network requests from completing and consuming resources if the component or operation is no longer relevant.
 
 * Improved User Experience: Allows for quick cancellation of long-running operations, enhancing responsiveness.

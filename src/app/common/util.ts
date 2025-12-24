@@ -55,7 +55,7 @@ export function createHttpObservable(url: string): any {
           return httpresponse.json();
         }
         else {
-          // fetch never rejects on HTTP errors so need to hand !ok requests
+          // fetch never rejects on HTTP errors so we need to manually handle !ok requests
           observer.error("Fetch Request failed with status code: " + httpresponse.status)
         }
         console.log("createHttpObservable fetch made for url:", url);
@@ -78,7 +78,7 @@ export function createHttpObservable(url: string): any {
 
          // 4. Check for and ignore an AbortError from cancellation
         if (err.name == 'AbortError') {
-          console.log('Fetch request was aborted.');
+          console.log('createHttpObservable(url) ===> Fetch request was aborted.');
           return;
         }
         // 5. If it's a different error, pass it to the subscriber
@@ -100,15 +100,19 @@ Key benefits of using AbortController in Angular:
 
      */
     // This is a custom feature to abort the fetch call after unsubscribing to the observable
+
     // trigger abort if we unsubscribe on fetch http observable
+
     // return anon callback function
-    // The signal read-only property of the AbortController interface returns an AbortSignal object instance, which can be used to communicate with/ abort an asynchronous operation as desired.
+
+    // The signal read-only property of the AbortController interface returns an AbortSignal object instance, which can be used to communicate with abort an asynchronous operation as desired.
     // if observer is unsubscribed then abort
 
       // 6. Return the teardown logic function to be executed by the observer
-    // This function runs automatically when the observer unsubscribes because the fetch.then.then.catch block exits and runs this
+
+    // This return() function runs automatically when the observer unsubscribes because the fetch.then.then.catch block exits and runs this by default
     return () => {
-      console.log('The Observer unsubscribed so Aborting fetch...');
+      console.log('createHttpObservable(url) ===> The Observer unsubscribed so Aborting fetch...');
       abortController.abort();
     };
   })

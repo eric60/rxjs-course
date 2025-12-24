@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {Course} from "../model/course";
-import {debounceTime, distinctUntilChanged, map, startWith, switchMap, take, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, first, map, startWith, switchMap, take, tap} from 'rxjs/operators';
 import {combineLatest, forkJoin, fromEvent, Observable} from 'rxjs';
 import {Lesson} from '../model/lesson';
 import {createHttpObservable} from '../common/util';
@@ -51,8 +51,11 @@ export class CourseComponent implements OnInit, AfterViewInit {
     const intervalCount = interval(1000);
     const takeFive = intervalCount.pipe(take(5));
     takeFive.subscribe(x => console.log(x));
+
+     forcing the completion of long running observables - first and take observables
+     this observable never completes, so use first() operator to force it to complete
      */
-    this.course$ = this.store.selectCourseById(this.courseId);
+    this.course$ = this.store.selectCourseById(this.courseId).pipe(take(1));
 
     // /api/lessons call #1
     this.lessons$ = this.loadLessons();

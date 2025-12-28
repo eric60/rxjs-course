@@ -1,7 +1,17 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {Course} from "../model/course";
-import {debounceTime, distinctUntilChanged, first, map, startWith, switchMap, take, tap} from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  first,
+  map,
+  startWith,
+  switchMap,
+  take,
+  tap,
+  withLatestFrom
+} from 'rxjs/operators';
 import {combineLatest, forkJoin, fromEvent, Observable} from 'rxjs';
 import {Lesson} from '../model/lesson';
 import {createHttpObservable} from '../common/util';
@@ -52,13 +62,21 @@ export class CourseComponent implements OnInit, AfterViewInit {
     const takeFive = intervalCount.pipe(take(5));
     takeFive.subscribe(x => console.log(x));
 
-     forcing the completion of long running observables - first and take observables
+     forcing the completion of long running observables - using first and take observables
      this observable never completes, so use first() operator to force it to complete
      */
     this.course$ = this.store.selectCourseById(this.courseId).pipe(take(1));
 
     // /api/lessons call #1
     this.lessons$ = this.loadLessons();
+
+    this.loadLessons()
+      .pipe(
+        withLatestFrom(this.course$) // output observable only emits when the source observable emits and need at least 1 value from ALL other input observabled
+      )
+      .subscribe(([lessons, course]) => {
+        console.log("withLatestFrom c4: lessons: {}, course: {}", lessons, course)
+      });
 
     // /api/lessons call #2
     // forkJoin(this.course$.pipe(take(1)), this.lessons$.pipe(take(1)))
@@ -78,8 +96,8 @@ export class CourseComponent implements OnInit, AfterViewInit {
 	•	Output is an array (or object) of latest values
      */
     // api/lessons call #3
-/*    combineLatest([this.course$, this.lessons$])
-      .subscribe((res) => console.log("combine latest result: ", res));*/
+    /*    combineLatest([this.course$, this.lessons$])
+          .subscribe((res) => console.log("combine latest result: ", res));*/
 
     setRxJSLoggingLevel(RxJSLoggingLevel.TRACE)
 

@@ -70,6 +70,11 @@ export class CourseComponent implements OnInit, AfterViewInit {
     // /api/lessons call #1
     this.lessons$ = this.loadLessons();
 
+    /*
+    withLatestFrom
+    inputs: withLatestFrom(...inputs: [...ObservableInputTuple<O>]):
+    outputs: OperatorFunction<T, [ T, ...O ]>
+     */
     this.loadLessons()
       .pipe(
         withLatestFrom(this.course$) // output observable only emits when the source observable emits and need at least 1 value from ALL other input observabled

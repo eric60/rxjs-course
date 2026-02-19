@@ -78,7 +78,7 @@ export function createHttpObservable(url: string): any {
 
          // 4. Check for and ignore an AbortError from cancellation
         if (err.name == 'AbortError') {
-          console.log('createHttpObservable(url) ===> Fetch request was aborted.');
+          console.log('createHttpObservable(url) => Fetch request was aborted.');
           return;
         }
         // 5. If it's a different error, pass it to the subscriber
@@ -112,7 +112,7 @@ Key benefits of using AbortController in Angular:
 
     // This return() function runs automatically when the observer unsubscribes because the fetch.then.then.catch block exits and runs this by default
     return () => {
-      console.log('createHttpObservable(url) ===> The Observer unsubscribed so Aborting fetch...');
+      console.log('createHttpObservable(url) => The Observer unsubscribed so Aborting fetch...');
       abortController.abort();
     };
   })

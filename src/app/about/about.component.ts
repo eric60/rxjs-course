@@ -134,7 +134,7 @@ export class AboutComponent implements OnInit {
 
 
 // ===============merge operator=================================
-    console.log("===> merge operator")
+    console.log("=> merge operator")
     const interval1$ = interval(1000)
     const interval2$ = interval1$.pipe(map(val => 10 * val))
     const intervalResult$ = merge(interval1$, interval2$)
